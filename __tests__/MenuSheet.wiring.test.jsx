@@ -46,13 +46,13 @@ jest.mock('../components/MenuSheet', () => (props) => {
             <Button
                 title="Copy All"
                 testID="copy-all"
-                onPress={props.handleCopyAll}
-            />
-            <Button
-                title="Toggle Auth"
-                testID="toggle-auth"
-                onPress={props.handleToggleAuth}
-            />
+                onPress={props.onCopyAll}
+      />
+      <Button
+        title="Toggle Auth"
+        testID="toggle-auth"
+        onPress={props.onToggleAuth}
+      />
         </View>
     );
 });
@@ -81,24 +81,29 @@ jest.mock('../hooks/useNotesData', () =>
     }))
 );
 
-const selectNoteSpy = jest.fn();
-const deleteNoteSpy = jest.fn();
-const copyAllSpy = jest.fn();
-const toggleAuthSpy = jest.fn();
+// Define spies inside the mock factory and expose them for assertions
+jest.mock('../hooks/useAppMenuController', () => {
+  const selectNoteSpy = jest.fn();
+  const deleteNoteSpy = jest.fn();
+  const copyAllSpy = jest.fn();
+  const toggleAuthSpy = jest.fn();
 
-jest.mock('../hooks/useAppMenuController', () =>
-    jest.fn(() => ({
-        menuOpen: true, // ensure MenuSheet is visible
-        openMenu: jest.fn(),
-        closeMenu: jest.fn(),
-        onCreateNoteFromMenu: jest.fn(),
-        onSelectNoteFromMenu: selectNoteSpy,
-        handleDeleteNote: deleteNoteSpy,
-        handleCopyAll: copyAllSpy,
-        handleDeleteAll: jest.fn(),
-        handleToggleAuth: toggleAuthSpy,
-    }))
-);
+  const mocked = () => ({
+    menuOpen: true, // ensure MenuSheet is visible
+    openMenu: jest.fn(),
+    closeMenu: jest.fn(),
+    onCreateNoteFromMenu: jest.fn(),
+    onSelectNoteFromMenu: selectNoteSpy,
+    handleDeleteNote: deleteNoteSpy,
+    handleCopyAll: copyAllSpy,
+    handleDeleteAll: jest.fn(),
+    handleToggleAuth: toggleAuthSpy,
+  });
+
+  // Expose spies so tests can access and clear them
+  mocked.__spies = { selectNoteSpy, deleteNoteSpy, copyAllSpy, toggleAuthSpy };
+  return mocked;
+});
 
 jest.mock('../hooks/useNoteEditor', () =>
     jest.fn(() => ({
@@ -120,36 +125,41 @@ jest.mock('../hooks/useNoteEditor', () =>
 import App from '../App';
 
 describe('MenuSheet wiring', () => {
-    beforeEach(() => {
-        selectNoteSpy.mockClear();
-        deleteNoteSpy.mockClear();
-        copyAllSpy.mockClear();
-        toggleAuthSpy.mockClear();
-    });
+  let spies;
 
-    it('invokes onSelectNoteFromMenu with the correct id', () => {
-        const { getByTestId } = render(<App />);
-        fireEvent.press(getByTestId('select-note-2'));
-        expect(selectNoteSpy).toHaveBeenCalledTimes(1);
-        expect(selectNoteSpy).toHaveBeenCalledWith('n2');
-    });
+  beforeEach(() => {
+    // Obtain spies from the mocked module and reset them
+    const mockedController = require('../hooks/useAppMenuController');
+    spies = mockedController.__spies;
+    spies.selectNoteSpy.mockClear();
+    spies.deleteNoteSpy.mockClear();
+    spies.copyAllSpy.mockClear();
+    spies.toggleAuthSpy.mockClear();
+  });
 
-    it('invokes handleDeleteNote with the correct id', () => {
-        const { getByTestId } = render(<App />);
-        fireEvent.press(getByTestId('delete-note-1'));
-        expect(deleteNoteSpy).toHaveBeenCalledTimes(1);
-        expect(deleteNoteSpy).toHaveBeenCalledWith('n1');
-    });
+  it('invokes onSelectNoteFromMenu with the correct id', () => {
+    const { getByTestId } = render(<App />);
+    fireEvent.press(getByTestId('select-note-2'));
+    expect(spies.selectNoteSpy).toHaveBeenCalledTimes(1);
+    expect(spies.selectNoteSpy).toHaveBeenCalledWith('n2');
+  });
 
-    it('invokes handleCopyAll', () => {
-        const { getByTestId } = render(<App />);
-        fireEvent.press(getByTestId('copy-all'));
-        expect(copyAllSpy).toHaveBeenCalledTimes(1);
-    });
+  it('invokes handleDeleteNote with the correct id', () => {
+    const { getByTestId } = render(<App />);
+    fireEvent.press(getByTestId('delete-note-1'));
+    expect(spies.deleteNoteSpy).toHaveBeenCalledTimes(1);
+    expect(spies.deleteNoteSpy).toHaveBeenCalledWith('n1');
+  });
 
-    it('invokes handleToggleAuth', () => {
-        const { getByTestId } = render(<App />);
-        fireEvent.press(getByTestId('toggle-auth'));
-        expect(toggleAuthSpy).toHaveBeenCalledTimes(1);
-    });
+  it('invokes handleCopyAll', () => {
+    const { getByTestId } = render(<App />);
+    fireEvent.press(getByTestId('copy-all'));
+    expect(spies.copyAllSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('invokes handleToggleAuth', () => {
+    const { getByTestId } = render(<App />);
+    fireEvent.press(getByTestId('toggle-auth'));
+    expect(spies.toggleAuthSpy).toHaveBeenCalledTimes(1);
+  });
 });
