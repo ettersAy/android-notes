@@ -2,8 +2,6 @@
 
 [![CI - Tests](https://github.com/ettersAy/android-notes/actions/workflows/test.yml/badge.svg)](https://github.com/ettersAy/android-notes/actions/workflows/test.yml)
 
-Replace OWNER/REPO above with your GitHub org/user and repo name.
-
 A simple notes app built with React Native (Expo). This repo includes a minimal, fast testing setup using Jest and React Native Testing Library, plus a GitHub Actions workflow that runs tests on every push and pull request.
 
 ## Requirements
