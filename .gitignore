@@ -39,4 +39,4 @@ yarn-error.*
 
 # Firebase local config
 # ⚠️ Comment this line before building the installation file apk
-./firebase.js
+#./firebase.js
