@@ -137,4 +137,29 @@ describe('App interactions', () => {
         fireEvent.press(getByTestId('open-menu-button'));
         expect(openMenuSpy).toHaveBeenCalledTimes(1);
     });
+
+  it('does NOT call handleSave when saving is true', () => {
+    const useNoteEditor = require('../hooks/useNoteEditor').default || require('../hooks/useNoteEditor');
+    const saveSpy = jest.fn();
+
+    // Override once: saving=true and provide a handleSave spy
+    useNoteEditor.mockImplementationOnce(() => ({
+      title: '',
+      setTitle: jest.fn(),
+      note: '',
+      setNote: jest.fn(),
+      noteId: 'n1',
+      setNoteId: jest.fn(),
+      saving: true, // critical: saving is true
+      savedVisible: false,
+      handleSave: saveSpy,
+      handleCreateNote: jest.fn(),
+      handleSelectNote: jest.fn(),
+      reset: jest.fn(),
+    }));
+
+    const { getByTestId } = render(<App />);
+    fireEvent.press(getByTestId('save-button'));
+    expect(saveSpy).not.toHaveBeenCalled();
+  });
 });
