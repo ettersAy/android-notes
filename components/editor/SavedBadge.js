@@ -11,17 +11,18 @@ export default function SavedBadge({ visible }) {
 }
 
 const styles = StyleSheet.create({
-  savedBadge: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: '#eaf9ea',
-    borderColor: '#b6e3b6',
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
+    savedBadge: {
+        position: 'absolute',
+        bottom: 20,
+        alignSelf: 'center',
+        backgroundColor: '#eaf9ea',
+        borderColor: '#b6e3b6',
+        borderWidth: 1,
+        borderRadius: 12,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+    },
+
   savedText: {
     color: '#15803d',
     fontSize: 12,

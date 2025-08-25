@@ -11,6 +11,8 @@ import useAuthUser from './hooks/useAuthUser';
 import useNotesData from './hooks/useNotesData';
 import useNoteEditor from './hooks/useNoteEditor';
 import useAppMenuController from './hooks/useAppMenuController';
+import * as Clipboard from 'expo-clipboard';
+import {useSnackbar} from "./utils/snackbar";
 
 export default function App() {
   const { user, checkingAuth } = useAuthUser();
@@ -50,6 +52,13 @@ export default function App() {
     handleSelectNote,
   });
 
+  const { showSnackbar } = useSnackbar();
+
+  const handleCopyNote = React.useCallback(async () => {
+    await Clipboard.setStringAsync(note);
+      showSnackbar('Note copied in the Clipboard');
+  }, [note]);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top', 'left', 'right']}>
       <KeyboardAvoidingView
@@ -66,7 +75,7 @@ export default function App() {
                 onChangeTitle={setTitle}
                 onChangeNote={setNote}
                 onSave={saving ? () => {} : handleSave}
-                onCopy={() => {}}
+                onCopy={handleCopyNote}
                 onOpenMenu={openMenu}
                 showSaved={savedVisible}
               />

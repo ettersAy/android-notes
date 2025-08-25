@@ -21,8 +21,8 @@ import {
 export async function saveNote(db, { uid, title, body, id }) {
   const trimmedTitle = (title || '').trim();
   const trimmedBody = (body || '').trim();
-  if (!uid) throw new Error('Missing user id');
-  if (!trimmedTitle && !trimmedBody) throw new Error('Note is empty');
+  if (!uid) throw new Error('Please connect to save your Notes');
+  if (!trimmedTitle || !trimmedBody) throw new Error(`Title and content can't be empty`);
 
   const now = serverTimestamp();
 
