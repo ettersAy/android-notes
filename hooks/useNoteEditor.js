@@ -1,7 +1,7 @@
 // hooks/useNoteEditor.js
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert } from 'react-native';
 import { saveNote } from '../services/notesService';
+import { useSnackbar } from '../utils/snackbar';
 
 export default function useNoteEditor({ db, user, fetchLatest, refreshNotes }) {
     const [title, setTitle] = useState('');
@@ -50,10 +50,12 @@ export default function useNoteEditor({ db, user, fetchLatest, refreshNotes }) {
         }
     }, []);
 
+    const { showSnackbar } = useSnackbar();
+
     const handleSave = useCallback(async () => {
         if (saving) return;
         if (!user) {
-            Alert.alert('Not signed in', 'Please sign in to save your note.');
+            showSnackbar('Not signed in. Please sign in to save your note.');
             return;
         }
         try {
@@ -68,11 +70,11 @@ export default function useNoteEditor({ db, user, fetchLatest, refreshNotes }) {
             }, 1500);
             await refreshNotes();
         } catch (e) {
-            Alert.alert('Save failed', e.message || String(e));
+            showSnackbar(`Save failed: ${e.message || String(e)}`);
         } finally {
             setSaving(false);
         }
-    }, [db, note, noteId, refreshNotes, saving, user]);
+    }, [db, title, note, noteId, refreshNotes, saving, user]);
 
     const handleCreateNote = useCallback(() => {
         setNoteId(null);

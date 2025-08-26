@@ -48,6 +48,7 @@ export default function useAppMenuController({
     setTitle,
     setNote,
     refreshNotes,
+    closeMenu,
   });
 
   const { handleCopyAll, handleDeleteAll } = useBulkActions({

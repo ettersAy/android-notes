@@ -1,8 +1,9 @@
 // component/AuthScreen.js
 import React, { useState } from 'react';
-import { View, TextInput, StyleSheet, TouchableOpacity, Text, Alert } from 'react-native';
+import { View, TextInput, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
+import { useSnackbar } from '../utils/snackbar';
 
 /**
  * AuthScreen
@@ -13,12 +14,13 @@ import { auth } from '../firebase';
 export default function AuthScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { showSnackbar } = useSnackbar();
 
     const onSignIn = async () => {
         try {
             await signInWithEmailAndPassword(auth, email.trim(), password);
         } catch (e) {
-            Alert.alert('Sign In Failed', e.message);
+            showSnackbar(`Sign In Failed: ${e.message}`);
         }
     };
 
@@ -26,7 +28,7 @@ export default function AuthScreen() {
         try {
             await createUserWithEmailAndPassword(auth, email.trim(), password);
         } catch (e) {
-            Alert.alert('Sign Up Failed', e.message);
+            showSnackbar(`Sign Up Failed: ${e.message}`);
         }
     };
 

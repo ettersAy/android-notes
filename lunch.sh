@@ -54,4 +54,4 @@ if [ "$NEED_INSTALL" -eq 1 ]; then
 fi
 
 echo "[launch] Starting Expo (tunnel)..."
-exec npx expo start --tunnel
+exec npx expo start --tunnel -c
